@@ -6,6 +6,22 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ArgsTest {
+    //    single option
+    //    Bool: -i
+    //    Integer: -p 8080
+    //    String: -d /usr/logs
+    //
+    //    multi options: -l -p 8080 -d /usr/logs
+    //
+    //    sad path:
+    //    Bool: -l t / -l t f
+    //    Integer: -p / -p 8080 8081
+    //    String: -d / -d /usr/logs /usr/vars
+    //
+    //    default value:
+    //    Bool: false
+    //    Integer: 0
+    //    String: ""
 
     @Test
     public void should_example_1() {
@@ -26,6 +42,6 @@ public class ArgsTest {
         assertArrayEquals(new int[]{1, 2, -3}, options.decimals());
     }
 
-    record ListOptions(@Option(value = "g") String[] group, @Option(value = "d") int[] decimals) {
+    record ListOptions(@Option( "g") String[] group, @Option("d") int[] decimals) {
     }
 }
