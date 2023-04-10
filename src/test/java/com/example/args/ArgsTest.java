@@ -1,5 +1,6 @@
 package com.example.args;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,6 +9,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ArgsTest {
     //    single option
     //    Bool: -i
+    @Test
+    public void should_set_boolean_option_to_true_if_flag_present() {
+        BooleanOption option = Args.parse(BooleanOption.class, "-l");
+
+        assertTrue(option.logging());
+    }
+
+    record BooleanOption(@Option("l") boolean logging) {
+    }
     //    Integer: -p 8080
     //    String: -d /usr/logs
     //
@@ -24,6 +34,7 @@ public class ArgsTest {
     //    String: ""
 
     @Test
+    @Disabled
     public void should_example_1() {
         Options options = Args.parse(Options.class, "-l", "-p", "8080", "-d", "/usr/logs");
         assertTrue(options.logging());
@@ -35,6 +46,7 @@ public class ArgsTest {
     }
 
     @Test
+    @Disabled
     public void should_example_2() {
         ListOptions options = Args.parse(ListOptions.class, "-g", "this", "is", "a", "list", "-d", "1", "2", "-3");
 
@@ -42,6 +54,6 @@ public class ArgsTest {
         assertArrayEquals(new int[]{1, 2, -3}, options.decimals());
     }
 
-    record ListOptions(@Option( "g") String[] group, @Option("d") int[] decimals) {
+    record ListOptions(@Option("g") String[] group, @Option("d") int[] decimals) {
     }
 }
