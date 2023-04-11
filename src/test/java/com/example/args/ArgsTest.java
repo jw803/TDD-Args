@@ -35,9 +35,17 @@ public class ArgsTest {
     }
 
     record IntOption(@Option("p") int port) {}
-    
+
     //    String: -d /usr/logs
-    //
+
+    @Test
+    public void should_get_string_as_option_value() {
+        StringOption option = Args.parse(StringOption.class, "-d", "/usr/logs");
+        assertEquals("/usr/logs", option.directory());
+    }
+
+    record StringOption(@Option("d") String directory) {}
+
     //    multi options: -l -p 8080 -d /usr/logs
     //
     //    sad path:
