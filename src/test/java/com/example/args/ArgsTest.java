@@ -1,5 +1,6 @@
 package com.example.args;
 
+import com.example.args.exceptions.IllegalOptionException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -20,15 +21,16 @@ public class ArgsTest {
     record MultiOptions(@Option("l") boolean logging, @Option("p") int port, @Option("d") String directory) {
     }
 
-    //    sad path:
-    //    Bool: -l t / -l t f
-    //    Integer: -p / -p 8080 8081
-    //    String: -d / -d /usr/logs /usr/vars
-    //
-    //    default value:
-    //    Bool: false
-    //    Integer: 0
-    //    String: ""
+    // 消除了關於Args的一個完整的bug 當 parameter 沒有annotation會有空指針異常
+    @Test
+    public void should_throw_illegal_option_exception_if_annotation_not_present() {
+        IllegalOptionException e = assertThrows(IllegalOptionException.class, () -> Args.parse(OptionsWithoutAnnotation.class, "-l", "-p", "8080", "-d", "/usr/logs"));
+        assertEquals("port", e.getParameter());
+    }
+
+    static record OptionsWithoutAnnotation(@Option(value = "l") boolean logging, int port,
+                                           @Option(value = "d") String directory) {
+    }
 
     @Test
     @Disabled
