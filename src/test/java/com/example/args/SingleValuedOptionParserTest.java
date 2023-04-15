@@ -8,15 +8,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.lang.annotation.Annotation;
+import java.util.function.Function;
 
 import static java.util.Arrays.asList;
 
 public class SingleValuedOptionParserTest {
-
-    //    sad path:
-    //    Bool: -l t / -l t f
-    //    Integer: -p / -p 8080 8081
-
     // Sad Path
     @Test
     public void should_not_accept_extra_argument_for_single_valued_option() {
@@ -42,7 +38,9 @@ public class SingleValuedOptionParserTest {
     // Default Value
     @Test
     public void should_set_default_value_to_0_for_int_option() {
-        Assertions.assertEquals(0, new SingleOptionParser<Integer>(0, Integer::parseInt).parse(asList(), option("p")));
+        Function<String, Object> whatever = (it) -> null;
+        Object defaultValue = new Object();
+        Assertions.assertSame(defaultValue, new SingleOptionParser<>(defaultValue, whatever).parse(asList(), option("p")));
     }
     //    String: -d / -d /usr/logs /usr/vars
 
@@ -50,7 +48,10 @@ public class SingleValuedOptionParserTest {
     // Happy Path
     @Test
     public void should_parse_value_if_flag_present() {
-        Assertions.assertEquals(8080, new SingleOptionParser<Integer>(0, Integer::parseInt).parse(asList("-p", "8080"), option("p")));
+        Object parsed = new Object();
+        Function<String, Object> parse = (it) -> parsed;
+        Object whatever = new Object();
+        Assertions.assertSame(parsed, new SingleOptionParser<>(whatever, parse).parse(asList("-p", "8080"), option("p")));
     }
 
     static Option option(String value) {
