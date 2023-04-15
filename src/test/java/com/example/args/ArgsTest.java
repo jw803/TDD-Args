@@ -1,6 +1,5 @@
 package com.example.args;
 
-import com.ibm.jvm.trace.format.api.Message;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
