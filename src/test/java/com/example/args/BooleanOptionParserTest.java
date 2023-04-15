@@ -9,10 +9,10 @@ import java.lang.annotation.Annotation;
 import static java.util.Arrays.asList;
 
 public class BooleanOptionParserTest {
-
     //    sad path:
     //    Bool: -l t / -l t f
 
+    // Sad Path
     @Test
     public void should_not_accept_extra_argument_for_boolean_option() {
         TooManyArgumentsExceptions e = Assertions.assertThrows(TooManyArgumentsExceptions.class, () -> {
@@ -22,6 +22,7 @@ public class BooleanOptionParserTest {
         Assertions.assertEquals("l", e.getOption());
     }
 
+    // Default Value
     // 會發現這是多餘的測試，因為參數大於一個以上其實對於測試都是相同的(這部分是當初在想需求得時候沒想清楚，在寫測試後才意識到)
     @Test
     public void should_not_accept_extra_arguments_for_boolean_option() {
@@ -39,6 +40,12 @@ public class BooleanOptionParserTest {
         Assertions.assertFalse(new BooleanParser().parse(asList(), option("l")));
     }
 
+    // Happy path
+    // 將happy path 從 ArgsTest移過來，因為這項測試放在ArgsTest怪怪的，應該要分門別類地放
+    @Test
+    public void should_set_default_value_to_true_if_option_present() {
+        Assertions.assertTrue(new BooleanParser().parse(asList("-l"), option("l")));
+    }
     //    Integer: -p / -p 8080 8081
     //    String: -d / -d /usr/logs /usr/vars
     //

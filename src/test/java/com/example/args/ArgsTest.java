@@ -7,34 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ArgsTest {
-    //    single option
-    //    Bool: -i
-    @Test
-    public void should_set_boolean_option_to_true_if_flag_present() {
-        BooleanOption option = Args.parse(BooleanOption.class, "-l");
-
-        assertTrue(option.logging());
-    }
-
-    @Test
-    public void should_set_boolean_option_to_false_if_flag_not_present() {
-        BooleanOption option = Args.parse(BooleanOption.class);
-
-        assertFalse(option.logging());
-    }
-
-    record BooleanOption(@Option("l") boolean logging) {
-    }
-    //    Integer: -p 8080
-
-    @Test
-    public void should_parse_int_as_option_value() {
-        IntOption option = Args.parse(IntOption.class, "-p", "8080");
-        assertEquals(8080, option.port());
-    }
-
-    record IntOption(@Option("p") int port) {}
-
     //    String: -d /usr/logs
 
     @Test
