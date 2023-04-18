@@ -26,16 +26,13 @@ class SingleOptionParser<T> implements OptionParser<T> {
 
         if (values.size() < 1) throw new InsufficientArgumentsExceptions(option.value());
         if (values.size() > 1) throw new TooManyArgumentsExceptions(option.value());
-        String value = arguments.get(index + 1);
+        String value = values.get(0);
         return valueParser.apply(value);
     }
 
-    private static List<String> getFlagValues(List<String> arguments, int index) {
-        int followingFlag = IntStream.range(index + 1, arguments.size())
+    static List<String> getFlagValues(List<String> arguments, int index) {
+        return arguments.subList(index + 1, IntStream.range(index + 1, arguments.size())
                 .filter(it -> arguments.get(it).startsWith("-"))
-                .findFirst().orElse(arguments.size());
-
-        List<String> values = arguments.subList(index + 1, followingFlag);
-        return values;
+                .findFirst().orElse(arguments.size()));
     }
 }
