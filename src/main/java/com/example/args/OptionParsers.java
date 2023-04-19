@@ -1,6 +1,5 @@
 package com.example.args;
 
-import com.example.args.exceptions.IllegalOptionException;
 import com.example.args.exceptions.IllegalValueException;
 import com.example.args.exceptions.InsufficientArgumentsExceptions;
 import com.example.args.exceptions.TooManyArgumentsExceptions;
@@ -30,20 +29,17 @@ class OptionParsers {
 
     private static Optional<List<String>> getFlagValues(List<String> arguments, Option option) {
         int index = arguments.indexOf("-" + option.value());
-        return Optional.ofNullable(index == -1 ? null : getFlagValues(arguments, index));
+        return Optional.ofNullable(index == -1 ? null : getFlagValuesHandler(arguments, index));
     }
 
     private static Optional<List<String>> getFlagValues(List<String> arguments, Option option, int expectedSize) {
-        Optional<List<String>> argumentList;
-        int index = arguments.indexOf("-" + option.value());
-        if (index == -1) return Optional.empty();
+        return getFlagValues(arguments, option).map(it -> checkSize(option, expectedSize, it));
+    }
 
-        List<String> values = getFlagValues(arguments, index);
-
+    private static List<String> checkSize(Option option, int expectedSize, List<String> values) {
         if (values.size() < expectedSize) throw new InsufficientArgumentsExceptions(option.value());
         if (values.size() > expectedSize) throw new TooManyArgumentsExceptions(option.value());
-
-        return Optional.of(values);
+        return values;
     }
 
     private static <T> T parseValue(Option option, String value, Function<String, T> valueParser) {
@@ -54,9 +50,9 @@ class OptionParsers {
         }
     }
 
-    private static List<String> getFlagValues(List<String> arguments, int index) {
+    private static List<String> getFlagValuesHandler(List<String> arguments, int index) {
         return arguments.subList(index + 1, IntStream.range(index + 1, arguments.size())
-                .filter(it -> arguments.get(it).startsWith("-"))
+                .filter(it -> arguments.get(it).matches("^-[a-zA-Z-]+$"))
                 .findFirst().orElse(arguments.size()));
     }
 }

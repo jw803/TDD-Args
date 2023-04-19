@@ -124,6 +124,13 @@ public class OptionParserTest {
             Assertions.assertEquals("g", e.getOption());
             Assertions.assertEquals("this", e.getValue());
         }
+
+        // 剛法發現對於負數會不小心誤認是flag，因此補上測試去修正這個問題
+        @Test
+        public void should_not_treat_negative_int_as_flag() {
+            Assertions.assertArrayEquals(new Integer[]{-1, -2}, OptionParsers.list(Integer[]::new, Integer::parseInt).parse(asList("-g", "-1", "-2"), option("g")));
+        }
+
     }
 
     static Option option(String value) {

@@ -1,6 +1,7 @@
 package com.example.args;
 
 import com.example.args.exceptions.IllegalOptionException;
+import com.example.args.exceptions.UnsupportedOptionTypeException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
@@ -26,11 +27,15 @@ public class Args {
 
     private static Object parseOption(List<String> arguments, Parameter parameter) {
         if (!parameter.isAnnotationPresent(Option.class)) throw new IllegalOptionException(parameter.getName());
-        return PARSERS.get(parameter.getType()).parse(arguments, parameter.getAnnotation(Option.class));
+        Option option = parameter.getAnnotation(Option.class);
+        if(!PARSERS.containsKey(parameter.getType())) throw new UnsupportedOptionTypeException(option.value(), parameter.getType());
+        return PARSERS.get(parameter.getType()).parse(arguments, option);
     }
 
     private static Map<Class<?>, OptionParser> PARSERS = Map.of(
             boolean.class, OptionParsers.bool(),
             int.class, OptionParsers.unary(0, Integer::parseInt),
-            String.class, OptionParsers.unary("", String::valueOf));
+            String.class, OptionParsers.unary("", String::valueOf),
+            String[].class, OptionParsers.list(String[]::new, String::valueOf),
+            Integer[].class, OptionParsers.list(Integer[]::new, Integer::parseInt));
 }
