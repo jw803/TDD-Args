@@ -1,14 +1,14 @@
 package com.example.args.exceptions;
 
 public class IllegalOptionException extends RuntimeException{
-    private String parameter;
+    private String option;
 
-    public IllegalOptionException(String parameter) {
-        super(parameter);
-        this.parameter = parameter;
+    public IllegalOptionException(String option) {
+        super(option);
+        this.option = option;
     }
 
-    public String getParameter() {
-        return parameter;
+    public String getOption() {
+        return option;
     }
 }

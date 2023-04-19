@@ -1,12 +1,14 @@
 package com.example.args;
 
 import com.example.args.exceptions.IllegalOptionException;
+import com.example.args.exceptions.IllegalValueException;
 import com.example.args.exceptions.InsufficientArgumentsExceptions;
 import com.example.args.exceptions.TooManyArgumentsExceptions;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 class OptionParsers {
@@ -18,6 +20,17 @@ class OptionParsers {
     public static <T> OptionParser<T> unary(T defaultValue, Function<String, T> valueParser) {
         return (arguments, option) -> getFlagValues(arguments, option, 1)
                 .map(it -> parseValue(option, it.get(0), valueParser)).orElse(defaultValue);
+    }
+
+    public static <T> OptionParser<T[]> list(IntFunction<T[]> generator, Function<String, T> valueParser) {
+        return (arguments, option) -> getFlagValues(arguments, option)
+                .map(it -> it.stream().map(value -> parseValue(option, value, valueParser))
+                        .toArray(generator)).orElse(generator.apply(0));
+    }
+
+    private static Optional<List<String>> getFlagValues(List<String> arguments, Option option) {
+        int index = arguments.indexOf("-" + option.value());
+        return Optional.ofNullable(index == -1 ? null : getFlagValues(arguments, index));
     }
 
     private static Optional<List<String>> getFlagValues(List<String> arguments, Option option, int expectedSize) {
@@ -37,7 +50,7 @@ class OptionParsers {
         try {
             return valueParser.apply(value);
         } catch (Exception e) {
-            throw new IllegalOptionException(option.value());
+            throw new IllegalValueException(option.value(), value);
         }
     }
 
