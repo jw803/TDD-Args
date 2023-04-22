@@ -88,7 +88,13 @@ public class OptionParserTest {
         // 也有可能是當初在想任務列表的時候想多了或是在實現某部分功能順便也把這部分的功能也實現了
         @Test
         public void should_set_default_value_to_false_if_option_not_present() {
-            Assertions.assertFalse(OptionParsers.bool().parse(asList(), option("l")));
+            //setup
+            OptionParser<Boolean> parser = OptionParsers.bool();
+            //exercise
+            Boolean result = parser.parse(asList(), option("l"));
+            //verify
+            Assertions.assertFalse(result);
+            //teardown
         }
 
         // Happy path

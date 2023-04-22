@@ -12,22 +12,38 @@ public class ArgsTest {
 
     @Test
     public void should_parse_multi_options() {
-        MultiOptions options = Args.parse(MultiOptions.class, "-l", "-p", "8080", "-d", "/usr/logs");
+
+        // SUT Args.parse
+
+
+        //before
+        MultiOptions options;
+        // exercise
+        options = Args.parse(MultiOptions.class, "-l", "-p", "8080", "-d", "/usr/logs");
+
+        //verify
         assertTrue(options.logging());
         assertEquals(8080, options.port());
         assertEquals("/usr/logs", options.directory());
+
+        // teardown
     }
 
+    // setup
     record MultiOptions(@Option("l") boolean logging, @Option("p") int port, @Option("d") String directory) {
     }
 
     // 消除了關於Args的一個完整的bug 當 parameter 沒有annotation會有空指針異常
     @Test
     public void should_throw_illegal_option_exception_if_annotation_not_present() {
-        IllegalOptionException e = assertThrows(IllegalOptionException.class, () -> Args.parse(OptionsWithoutAnnotation.class, "-l", "-p", "8080", "-d", "/usr/logs"));
+        IllegalOptionException e = /* verify */assertThrows(IllegalOptionException.class, () -> /* exercise */Args.parse(OptionsWithoutAnnotation.class, "-l", "-p", "8080", "-d", "/usr/logs"));
+        // verify
         assertEquals("port", e.getOption());
+
+        //teardown
     }
 
+    //setup
     static record OptionsWithoutAnnotation(@Option(value = "l") boolean logging, int port,
                                            @Option(value = "d") String directory) {
     }
