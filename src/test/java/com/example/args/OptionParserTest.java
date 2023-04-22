@@ -1,6 +1,5 @@
 package com.example.args;
 
-import com.example.args.exceptions.IllegalOptionException;
 import com.example.args.exceptions.IllegalValueException;
 import com.example.args.exceptions.InsufficientArgumentsExceptions;
 import com.example.args.exceptions.TooManyArgumentsExceptions;
@@ -9,6 +8,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Function;
@@ -52,12 +53,13 @@ public class OptionParserTest {
 
 
         // Happy Path
+        // 將狀態驗證改為行爲驗證會比較直觀
         @Test
         public void should_parse_value_if_flag_present() {
-            Object parsed = new Object();
-            Function<String, Object> parse = (it) -> parsed;
-            Object whatever = new Object();
-            Assertions.assertSame(parsed, OptionParsers.unary(whatever, parse).parse(asList("-p", "8080"), option("p")));
+            Function parser = Mockito.mock(Function.class);
+
+            OptionParsers.unary(Mockito.any(), parser).parse(asList("-p", "8080"), option("p"));
+            Mockito.verify(parser).apply("8080");
         }
     }
 
@@ -107,11 +109,17 @@ public class OptionParserTest {
 
     @Nested
     class ListOptionParser{
-        //TODO: -g "this" "is"
+        //TODO: -g "this" "is
+        // 改為行為驗證，比之前的狀態驗證更不被單一型別綁住
         @Test
         public void should_parse_list_value() {
-            String[] value = OptionParsers.list(String[]::new, String::valueOf).parse(asList("-g", "this", "is"), option("g"));
-            Assertions.assertArrayEquals(new String[]{"this", "is"}, value);
+            Function parser = Mockito.mock(Function.class);
+            OptionParsers.list(Object[]::new, parser).parse(asList("-g", "this", "is"), option("g"));
+
+            InOrder order = Mockito.inOrder(parser, parser);
+            order.verify(parser).apply("this");
+            order.verify(parser).apply("is");
+
         }
         //TODO: default value
         @Test
